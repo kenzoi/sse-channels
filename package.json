@@ -1,0 +1,45 @@
+{
+  "name": "sse-event-stream",
+  "version": "0.0.0-alpha.2",
+  "description": "Small utility for sending Server-sent events (SSE)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/",
+    "package.json",
+    "LICENSE.md",
+    "README.md"
+  ],
+  "scripts": {
+    "prepare": "rm -rf dist && tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kenzoi/sse-event-stream.git"
+  },
+  "keywords": [
+    "sse",
+    "event-stream",
+    "server-sent",
+    "EventSource"
+  ],
+  "author": "kenzoi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kenzoi/sse-event-stream/issues"
+  },
+  "homepage": "https://github.com/kenzoi/sse-event-stream#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.9.0",
+    "@types/node": "^22.2.0",
+    "eslint": "^9.9.0",
+    "globals": "^15.9.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.1.0"
+  },
+  "dependencies": {
+    "sse-stringify": "^0.0.0-alpha.2"
+  }
+}
