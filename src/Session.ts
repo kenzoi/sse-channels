@@ -1,6 +1,6 @@
-import { EventEmitter } from 'node:events';
-import { Connection } from './Connection';
-import { sseStringify, EventStream } from 'sse-stringify';
+import { EventEmitter } from "node:events";
+import { Connection } from "./Connection";
+import { sseStringify, EventStream } from "sse-stringify";
 
 interface Options {
   historySize?: number;
@@ -20,11 +20,11 @@ export class Session extends EventEmitter {
   add(connection: Connection) {
     this.connections.add(connection);
 
-    connection.once('close', () => this.remove(connection));
+    connection.once("close", () => this.remove(connection));
     if (connection.lastEventID) {
       // this.historyStore.has(connection.lastEventID) would be more cheap, but for now let's maintain our internal array as source of truth
       const index = this.lastEventIDs.findLastIndex(
-        (eventID) => eventID === connection.lastEventID,
+        (eventID) => eventID === connection.lastEventID
       );
       if (index !== -1) {
         // send newer messages than the lastEventID received

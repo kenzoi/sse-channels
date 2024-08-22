@@ -1,9 +1,9 @@
-import type { IncomingMessage, ServerResponse } from 'node:http';
-import { EventEmitter } from 'node:events';
-import { sseStringify, type EventStream } from 'sse-stringify';
+import type { IncomingMessage, ServerResponse } from "node:http";
+import { EventEmitter } from "node:events";
+import { sseStringify, type EventStream } from "sse-stringify";
 
 function isNumber(value: unknown) {
-  if (typeof value !== 'number' || Number.isNaN(value)) {
+  if (typeof value !== "number" || Number.isNaN(value)) {
     return false;
   }
   return true;
@@ -30,7 +30,7 @@ export class Connection extends EventEmitter {
   constructor(
     request: IncomingMessage,
     response: ServerResponse,
-    options?: Options,
+    options?: Options
   ) {
     super();
     this.request = request;
@@ -38,24 +38,24 @@ export class Connection extends EventEmitter {
     this.timestamp = Date.now();
 
     if (
-      request.headers['last-event-id'] &&
-      !Array.isArray(request.headers['last-event-id'])
+      request.headers["last-event-id"] &&
+      !Array.isArray(request.headers["last-event-id"])
     ) {
-      this.lastEventID = request.headers['last-event-id'];
+      this.lastEventID = request.headers["last-event-id"];
     }
 
     // request.socket.setKeepAlive(true); would only check the connection up to the reserve proxy and not the end-to-end connection.
     // also have a risky default of sending a keep alive with an interval of 1 second and we can't change this value from here without nasty tweaks
-    response.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
-    response.setHeader('Cache-Control', 'no-store,no-transform');
-    response.setHeader('X-Accel-Buffering', 'no');
-    response.setHeader('Connection', 'keep-alive');
+    response.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+    response.setHeader("Cache-Control", "no-store,no-transform");
+    response.setHeader("X-Accel-Buffering", "no");
+    response.setHeader("Connection", "keep-alive");
     response.statusCode = 200;
     response.flushHeaders();
 
-    request.once('close', () => {
+    request.once("close", () => {
       this.cleanup();
-      this.emit('close');
+      this.emit("close");
     });
 
     if (options?.ping) {
@@ -82,15 +82,15 @@ export class Connection extends EventEmitter {
   public setPing(pingInterval: number) {
     if (!isNumber(pingInterval)) {
       throw new TypeError(
-        `pingInterval value must be of type number but received ${typeof pingInterval}`,
+        `pingInterval value must be of type number but received ${typeof pingInterval}`
       );
     }
     if (pingInterval < 1) {
-      throw new Error('pingInterval value must be 1 or greater than 1');
+      throw new Error("pingInterval value must be 1 or greater than 1");
     }
     clearTimeout(this.pingIntervalID);
     this.pingIntervalID = setInterval(() => {
-      this.response.write(sseStringify({ comment: '' }));
+      this.response.write(sseStringify({ comment: "" }));
     }, pingInterval);
     return this;
   }
@@ -98,11 +98,11 @@ export class Connection extends EventEmitter {
   public setTimeout(time: number) {
     if (!isNumber(time)) {
       throw new TypeError(
-        `timeout value must be of type number but received ${typeof time}`,
+        `timeout value must be of type number but received ${typeof time}`
       );
     }
     if (time < 0) {
-      throw new Error('timeout value must be 0 or greater than 0');
+      throw new Error("timeout value must be 0 or greater than 0");
     }
     clearTimeout(this.timeoutID); // if time is 0 just try clear timeout
     if (time > 0) {
@@ -110,11 +110,11 @@ export class Connection extends EventEmitter {
         // If no 'timeout' listener is added then Connection are ended when they time out.
         // If a handler is assigned to the 'timeout' events, timed out must be handled explicitly.
         // https://nodejs.org/api/http.html#responsesettimeoutmsecs-callback
-        const listeners = this.listenerCount('timeout');
+        const listeners = this.listenerCount("timeout");
         if (listeners === 0) {
           this.end();
         } else {
-          this.emit('timeout');
+          this.emit("timeout");
         }
       }, time);
     }
