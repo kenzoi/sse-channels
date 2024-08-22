@@ -17,7 +17,7 @@ export interface Options {
 
 export class Connection extends EventEmitter {
   static default = {
-    pingInterval: 50, // seconds
+    pingInterval: 50 * 1000, // 50 seconds
   };
 
   public request: IncomingMessage;
@@ -75,10 +75,9 @@ export class Connection extends EventEmitter {
     return this;
   }
 
-  // if we add some queue or control on response.write, expose our raw write
-  // write(data: unknown) {
-  //  this.response.write(data);
-  // }
+  write(data: string) {
+    this.response.write(data);
+  }
 
   public setPing(pingInterval: number) {
     if (!isNumber(pingInterval)) {
@@ -89,9 +88,10 @@ export class Connection extends EventEmitter {
     if (pingInterval < 1) {
       throw new Error('pingInterval value must be 1 or greater than 1');
     }
+    clearTimeout(this.pingIntervalID);
     this.pingIntervalID = setInterval(() => {
       this.response.write(sseStringify({ comment: '' }));
-    }, pingInterval * 1000);
+    }, pingInterval);
     return this;
   }
 
@@ -107,8 +107,16 @@ export class Connection extends EventEmitter {
     clearTimeout(this.timeoutID); // if time is 0 just try clear timeout
     if (time > 0) {
       this.timeoutID = setTimeout(() => {
-        this.emit('timeout');
-      }, time * 1000);
+        // If no 'timeout' listener is added then Connection are ended when they time out.
+        // If a handler is assigned to the 'timeout' events, timed out must be handled explicitly.
+        // https://nodejs.org/api/http.html#responsesettimeoutmsecs-callback
+        const listeners = this.listenerCount('timeout');
+        if (listeners === 0) {
+          this.end();
+        } else {
+          this.emit('timeout');
+        }
+      }, time);
     }
     return this;
   }
