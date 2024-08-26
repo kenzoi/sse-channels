@@ -1,6 +1,6 @@
 {
   "name": "sse-channels",
-  "version": "0.0.0-beta.0",
+  "version": "0.1.0-beta.0",
   "description": "Server-sent events (sse)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -46,6 +46,6 @@
     "typescript-eslint": "^8.1.0"
   },
   "dependencies": {
-    "sse-stringify": "^0.0.0-alpha.2"
+    "sse-stringify": "^0.1.0"
   }
 }
