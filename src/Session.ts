@@ -4,27 +4,30 @@ import { sseStringify, EventStream } from "sse-stringify";
 
 interface Options {
   historySize?: number;
+  emptyTimeout?: number;
 }
 
 export class Session extends EventEmitter {
   private connections = new Set<Connection>();
   private lastEventIDs: string[] = [];
   private historySize: number;
+  private emptyTimeout: number;
   private historyStore: Map<string, string> = new Map();
+  private timeoutID?: NodeJS.Timeout;
 
   constructor(options?: Options) {
     super();
     this.historySize = options?.historySize || 500;
+    this.emptyTimeout = options?.emptyTimeout || 10 * 60 * 1000; // 10 minutes
   }
-
   add(connection: Connection) {
     this.connections.add(connection);
-
+    clearTimeout(this.timeoutID);
     connection.once("close", () => this.remove(connection));
     if (connection.lastEventID) {
       // this.historyStore.has(connection.lastEventID) would be more cheap, but for now let's maintain our internal array as source of truth
       const index = this.lastEventIDs.findLastIndex(
-        (eventID) => eventID === connection.lastEventID
+        (eventID) => eventID === connection.lastEventID,
       );
       if (index !== -1) {
         // send newer messages than the lastEventID received
@@ -38,7 +41,13 @@ export class Session extends EventEmitter {
   }
 
   remove(connection: Connection) {
-    return this.connections.delete(connection);
+    const result = this.connections.delete(connection);
+    if (result && this.connections.size === 0) {
+      this.timeoutID = setTimeout(() => {
+        this.emit("close");
+      }, this.emptyTimeout);
+    }
+    return result;
   }
 
   count() {
