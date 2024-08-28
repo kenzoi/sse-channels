@@ -1,7 +1,7 @@
 {
   "name": "sse-channels",
-  "version": "0.1.0-beta.0",
-  "description": "Server-sent events (sse)",
+  "version": "0.1.0",
+  "description": "Server-Sent Events utility written in TypeScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "engines": {
@@ -23,9 +23,12 @@
   },
   "keywords": [
     "sse",
+    "events",
+    "messaging",
+    "real-time",
     "event-stream",
-    "server-sent",
-    "EventSource",
+    "server-sent-events",
+    "eventsource",
     "sse-channel",
     "sse-channels",
     "channel"
