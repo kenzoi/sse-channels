@@ -18,7 +18,7 @@ export class Channel extends EventEmitter {
   constructor(options?: Options) {
     super();
     this.historySize = options?.historySize || 500;
-    this.emptyTimeout = options?.emptyTimeout || 10 * 60 * 1000; // 10 minutes
+    this.emptyTimeout = options?.emptyTimeout || 0;
   }
   add(connection: Connection) {
     this.connections.add(connection);
@@ -42,7 +42,7 @@ export class Channel extends EventEmitter {
 
   remove(connection: Connection) {
     const result = this.connections.delete(connection);
-    if (result && this.connections.size === 0) {
+    if (this.emptyTimeout > 0 && result && this.connections.size === 0) {
       this.timeoutID = setTimeout(() => {
         this.emit("close");
       }, this.emptyTimeout);
