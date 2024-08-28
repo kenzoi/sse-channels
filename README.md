@@ -7,7 +7,7 @@ Server-Sent Events utility written in TypeScript.
   - Simple
   - Built in types
   - Framework agnostic
-  - Flexible, independent connections make it easy create your custom channel logic
+  - Flexible, independent connections make it easy to create your custom channel logic
   - History is maintained automatically
   - Channels automatically sends missed events upon reconnections
   - Temporary Channels (if you need a channel per active user for example)
@@ -117,14 +117,21 @@ app.get("/sse/user/:userID", function (req, res) {
 
 // somewhere else, broadcast event to specific user connections
 const userChannel = channelStore.get(userID);
-userChannel.send({
-  event: "user-event",
-  data: JSON.stringify({}),
-  id: "id",
-});
+if (userChannel) {
+  userChannel.send({
+    event: "user-event",
+    data: JSON.stringify({}),
+    id: "id",
+  });
+}
 ```
 
 ## IMPORTANT
 
 While a major version `1.0.0` is not released **if you want to use this package in production please lock by its minor version like this `>=0.1.0 <0.2.0`.**
 The public API SHOULD NOT be considered stable, but I'll not break it with PATCH versions.
+
+
+### License
+
+[MIT licensed](./LICENSE).
