@@ -1,3 +1,3 @@
 export * from "./Connection";
-export * from "./Session";
+export * from "./Channel";
 export * from "./MapListener";

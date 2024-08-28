@@ -7,7 +7,7 @@ interface Options {
   emptyTimeout?: number;
 }
 
-export class Session extends EventEmitter {
+export class Channel extends EventEmitter {
   private connections = new Set<Connection>();
   private lastEventIDs: string[] = [];
   private historySize: number;
